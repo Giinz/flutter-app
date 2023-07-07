@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1037285475970",
+    "project_id": "duc-flutter-app",
+    "storage_bucket": "duc-flutter-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037285475970:android:de6dcd2ad7aa604239969b",
+        "android_client_info": {
+          "package_name": "com.example.flutter_new_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037285475970-a4mknckq0ep84on1n2oj6m9bkcliilje.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQz242bLRu0o_ZG0B3VKdl9WsGmUu8x38"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037285475970-a4mknckq0ep84on1n2oj6m9bkcliilje.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
