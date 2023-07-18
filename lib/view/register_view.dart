@@ -1,5 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_new_app/constants/routes.dart';
+import 'package:flutter_new_app/services/auth/auth_exceptions.dart';
+import 'package:flutter_new_app/services/auth/auth_service.dart';
+import 'package:flutter_new_app/utils/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -54,25 +57,36 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email,
-                  password: password,
+                await AuthService.firebase().createUser(email: email, password: password);
+                if (!mounted) return;
+                AuthService.firebase().sendEmailVerification();
+                Navigator.of(context).pushNamed(verifyEmailRoute);
+              } on WeakPasswordAuthException {
+                await showErrDialog(
+                  context,
+                  'Weak password!',
                 );
-                print(userCredential);
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
-                  print('Weak password');
-                } else if (e.code == 'email-already-in-use') {
-                  print('Email is already in use');
-                } else if (e.code == 'invalid-email') {
-                  print('Invalid Email');
-                }
+              } on EmailAlreadyInUseAuthException {
+                await showErrDialog(
+                  context,
+                  'Email is already in use!',
+                );
+              } on InvalidemailAuthException {
+                await showErrDialog(
+                  context,
+                  'Invalid Email',
+                );
+              } on GenericlAuthException {
+                await showErrDialog(
+                  context,
+                  'Failed to register',
+                );
               }
             },
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+              Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (route) => false);
             },
             child: const Text('Already register? Login here!'),
           )
