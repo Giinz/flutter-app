@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_new_app/constants/routes.dart';
+import 'package:flutter_new_app/helpers/loading/loading_screen.dart';
 import 'package:flutter_new_app/services/auth/bloc/auth_bloc.dart';
 import 'package:flutter_new_app/services/auth/bloc/auth_event.dart';
 import 'package:flutter_new_app/services/auth/bloc/auth_state.dart';
@@ -22,13 +23,7 @@ void main() async {
         create: (context) => AuthBloc(FirebaseAuthProvider()),
         child: const HomePage(),
       ),
-      routes: {
-        loginRoute: (context) => const LoginView(),
-        registerRoute: (context) => const RegisterView(),
-        notesRoute: (context) => const NotesView(),
-        verifyEmailRoute: (context) => const VerifyEmailView(),
-        createUpdateNoteRoute: (context) => const CreateUpdateNoteView()
-      },
+      routes: {createUpdateNoteRoute: (context) => const CreateUpdateNoteView()},
     ),
   );
 }
@@ -39,7 +34,17 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.isLoading) {
+          LoadingScreen().show(
+            context: context,
+            text: state.loadingText ?? 'Please wait a moment!',
+          );
+        } else {
+          LoadingScreen().hide();
+        }
+      },
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
           return const NotesView();
@@ -47,6 +52,8 @@ class HomePage extends StatelessWidget {
           return const VerifyEmailView();
         } else if (state is AuthStateLoggedOut) {
           return const LoginView();
+        } else if (state is AuthStateRegistering) {
+          return const RegisterView();
         } else {
           return const Scaffold(
             body: CircularProgressIndicator(),
